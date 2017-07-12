@@ -1,13 +1,50 @@
 //var selenium = require('selenium-webdriver');
 var webdriver = require('selenium-webdriver');
-let browser = {browser: new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build(),
-                 inUse:false};
-let browser2 = {browser: new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build(),
-                 inUse:false};
+// let browser = {browser: new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build(),
+//                  inUse:false};
+// let browser2 = {browser: new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build(),
+//                  inUse:false};
+                 
+let browser3 = new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build()
 
-var count = 0
+// var count = 0
 
-var browsers = [ browser , browser2]
+// var browsers = [ browser , browser2]
+
+const fetchSingleDownloadLink = function getData(videoID, cb){
+
+          //DO STUFF
+   const youtubeLink = 'https://www.youtube.com/watch?v=' + videoID
+
+    browser3.get('https://www.ytmp3.cc')
+    browser3.findElement(webdriver.By.id('input')).sendKeys(youtubeLink).then((inputField)=>{
+
+    browser3.findElement(webdriver.By.id('submit')).click()
+
+    var refreshID = setInterval(()=>{
+
+        browser3.findElement(webdriver.By.id('file')).getAttribute("href").then((data)=>{
+
+          if(data != ''){
+            console.log('got link - :', data)
+            clearInterval(refreshID)
+            
+            cb(data)
+          }
+
+
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+
+      }, 1500)
+
+    })
+
+
+
+}
 
 const fetchDownloadLinks = function getData(youtubeArray, cb){
   
@@ -83,4 +120,4 @@ const fetchDownloadLinks = function getData(youtubeArray, cb){
 }
           //browser.quit()
 
-module.exports = {fetchDownloadLinks};
+module.exports = {fetchSingleDownloadLink,fetchDownloadLinks};
